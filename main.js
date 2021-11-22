@@ -55,3 +55,74 @@ const posts = [
         "created": "2021-03-05"
     }
 ];
+
+function reverseDate(str){
+    return str.split('-').reverse().join('-');
+}
+
+function creaProfilo(nome){
+    let iniziali = nome[0];
+    for(let i = 0; i < nome.length; i++){
+        if(nome[i]== " ")iniziali += nome[i+1];
+    }
+    
+    return `<div class="profile-pic-default"><span>${iniziali}</span></div>`
+}
+
+const cont = document.getElementById("container");
+
+for(let i = 0; i < posts.length; i++){
+    let date = reverseDate(posts[i].created);
+    let fotoProfilo = ``;
+    if(posts[i].author["image"] == null){
+        fotoProfilo = creaProfilo(posts[i].author["name"]);
+    }
+    else fotoProfilo = `<img class="profile-pic" src="${posts[i].author["image"]}" alt="${posts[i].author["name"]}">`
+
+    cont.innerHTML += 
+    `<div class="post">
+        <div class="post__header">
+            <div class="post-meta">                    
+                <div class="post-meta__icon">
+                    ${fotoProfilo}                
+                </div>
+                <div class="post-meta__data">
+                    <div class="post-meta__author">${posts[i].author["name"]}</div>
+                    <div class="post-meta__time">${date}</div>
+                </div>                    
+            </div>
+        </div>
+        <div class="post__text">${posts[i].content}</div>
+        <div class="post__image">
+            <img src="${posts[i].media}" alt="">
+        </div>
+        <div class="post__footer">
+            <div class="likes js-likes">
+                <div class="likes__cta">
+                    <a class="like-button  js-like-button" href="#" data-postid="${posts[i].id}">
+                        <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
+                        <span class="like-button__label">Mi Piace</span>
+                    </a>
+                </div>
+                <div class="likes__counter">
+                    Piace a <b id="like-counter-${posts[i].id}" class="js-likes-counter">${posts[i].likes}</b> persone
+                </div>
+            </div> 
+        </div>            
+    </div>`
+}
+
+let btn_like = document.querySelectorAll(".like-button");
+
+for(let i = 0; i < btn_like.length; i++){
+    btn_like[i].addEventListener('click', function(){
+        event.preventDefault();
+        const counter = "like-counter-" + (i+1);
+        const like = document.getElementById(counter);
+        btn_like[i].classList.toggle("like-button--liked");
+        if(btn_like[i].classList.contains("like-button--liked")){
+            like.innerHTML = parseInt(document.getElementById(counter).innerText) + 1;
+        }
+        else like.innerHTML = parseInt(document.getElementById(counter).innerText) - 1;
+    });
+}
